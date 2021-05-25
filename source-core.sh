@@ -10,6 +10,23 @@ settitlepath() {
   export PS1="\[\e]0;$(uname) \u@\h \w\a\]\n$PS1"
 }
 
+ECHOEVAL=1
+echo-eval-on() {
+  ECHOEVAL=1
+}
+
+echo-eval-off() {
+  ECHOEVAL=0
+}
+
+echo-eval() {
+  if [ $ECHOEVAL -eq 1 ] ; then
+    echo ">>  " $@
+  fi  
+  eval $@
+}
+
+
 is_cygwin() {
   if echo $(uname) | grep -iq cygwin; then
     return 0
