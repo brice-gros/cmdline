@@ -10,4 +10,6 @@ source ~/cmdline/source-git.sh
 enable_native_symlinks
 setcoloredprompt
 settitlepath
+
+export HISTCONTROL=ignoreboth # ignoredups,ignoreboth,erasedups,ignorespace
 ```

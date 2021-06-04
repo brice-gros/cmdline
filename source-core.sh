@@ -1,30 +1,5 @@
 #!/usr/bin/sh
 # expected to be sourced 
-settitle() {
-  echo -ne "\e]0;$1\a"
-}
-setcoloredprompt() {
-  export PS1="\[\e[31m\]$(uname) \e[35m\]\u@\h \[\e[34m\]\w\[\e[0m\]\n$ "
-}
-settitlepath() {
-  export PS1="\[\e]0;$(uname) \u@\h \w\a\]\n$PS1"
-}
-
-ECHOEVAL=1
-echo-eval-on() {
-  ECHOEVAL=1
-}
-
-echo-eval-off() {
-  ECHOEVAL=0
-}
-
-echo-eval() {
-  if [ $ECHOEVAL -eq 1 ] ; then
-    echo ">>  " $@
-  fi  
-  eval $@
-}
 
 
 is_cygwin() {
@@ -95,6 +70,71 @@ current_script_real_dir() {
   else
     $( cd "$( dirname $(readlink -f "$1"))" && pwd )
   fi
+}
+
+settitle() {
+  echo -ne "\e]0;$1\a"
+}
+
+setcoloredprompt() {
+  if ! declare -f __git_ps1 > /dev/null ; then
+    # real implementation is: https://raw.githubusercontent.com/git/git/master/contrib/completion/git-prompt.sh
+    __git_ps1() {
+      branchname=$(git branch --show-current 2> /dev/null)
+      if test $? -eq 0 ; then
+        echo -n " ($branchname)"
+      else
+        echo -n ''
+      fi
+    }
+  fi
+  
+  # git bash default works well with black background:
+  # export PS1="\[\033]0;$TITLEPREFIX:$PWD\007\]\n\[\033[32m\]\u@\h \[\033[35m\]$MSYSTEM \[\033[33m\]\w\[\033[36m\]`__git_ps1`\[\033[0m\]\n$ "
+  # mine works well with black/grey/white background: (Note that \e == \033)
+  export PS1="\[\e[32m\]\u@\h \[\e[35m\]$MSYSTEM \[\e[31m\]\w\[\e[36m\]`__git_ps1`\[\e[0m\]\n$ "
+}
+
+settitlepath() {
+  # from git bash default originally:
+  # export PS1="\[\033]0;$TITLEPREFIX:$PWD\007\]\n$PS1"
+  if is_msys ; then
+    export PS1="\[\e]0;$MSYSTEM \u@\h \w\a\]\n$PS1"
+  else
+    export PS1="\[\e]0;$(uname) \u@\h \w\a\]\n$PS1"
+  fi
+}
+
+bell() {
+  #pure windows : rundll32 user32.dll,MessageBeep
+  tput bel
+}
+
+say() {
+  # https://stackoverflow.com/a/39647762
+  if is_darwin ; then
+    say $@
+  elif is_linux ; then
+    spd-say $@
+  else
+    PowerShell -Command "Add-Type –AssemblyName System.Speech; (New-Object System.Speech.Synthesis.SpeechSynthesizer).Speak('$@');"
+  fi
+}
+
+ECHOEVAL=1
+echo-eval-on() {
+  ECHOEVAL=1
+}
+
+echo-eval-off() {
+  ECHOEVAL=0
+}
+
+echo-eval() {
+  if [ $ECHOEVAL -eq 1 ] ; then
+    echo ">>  " $@
+  fi  
+  eval $@
 }
 
 is_ssh_key_password_protected() {
