@@ -109,6 +109,11 @@ settitlepath() {
   export PS1="\[\e]0;$systemname \u@\h \w\a\]\n$PS1"
 }
 
+setprompt() {
+  setcoloredprompt
+  settitlepath
+}
+
 bell() {
   #pure windows : rundll32 user32.dll,MessageBeep
   tput bel
