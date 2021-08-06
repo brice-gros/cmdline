@@ -11,4 +11,5 @@ enable_native_symlinks
 export PROMPT_COMMAND='setprompt'
 
 export HISTCONTROL=ignoreboth # ignoredups,ignoreboth,erasedups,ignorespace
+shopt -s histappend
 ```

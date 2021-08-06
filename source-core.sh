@@ -96,7 +96,7 @@ setcoloredprompt() {
   if is_msys ; then
     systemname=$MSYSTEM
   fi
-  export PS1="\[\e[32m\]\u@\h \[\e[35m\]$systemname \[\e[31m\]\w\[\e[36m\]`__git_ps1`\[\e[0m\]\n$ "
+  export PS1="\n\[\e[43m\]`date  --iso-8601=seconds --utc |cut -d '+' -f 1`\[\e[0m\]\n\[\e[32m\]\u@\h \[\e[35m\]$systemname \[\e[31m\]\w\[\e[36m\]`__git_ps1`\[\e[0m\]\n$ "
 }
 
 settitlepath() {
@@ -172,7 +172,7 @@ is_admin() {
 
 
 enable_native_symlinks() {
-  # force cygwin to make NTFS symbolic links
+  # force cygwin or msys to make NTFS symbolic links
   # http://stackoverflow.com/a/18659632
   # https://cygwin.com/cygwin-ug-net/using.html#pathnames-symlinks
   # - Cygwin creates symbolic links potentially in multiple different ways:

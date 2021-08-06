@@ -50,7 +50,7 @@ git_fetch_prune_all() {
   if [ $# != 0 ]; then
   delete_args=$@
   fi
-  git-local-prune $delete_args
+  git_local_prune $delete_args
 }
 
 remove_quotes() {
