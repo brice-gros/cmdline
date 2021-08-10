@@ -146,6 +146,17 @@ echo-eval() {
   eval $@
 }
 
+
+is_actual_path() {
+  # usage: is_actual_path /path/to/test
+  if test $(test -z "$1") -a $(test -d "$1") ; then
+    echo $(cd $1 && test `pwd` = `pwd -P`)
+    return 0
+  else
+    return 1
+  fi
+}
+
 is_ssh_key_password_protected() {
     id_rsa_path="$1"
     if SSH_ASKPASS=/bin/false ssh-keygen -y -f $id_rsa_path < /dev/null >&/dev/null ; then

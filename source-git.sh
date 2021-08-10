@@ -165,6 +165,70 @@ git_describe() {
   git describe --tags --always --dirty="-dirty"
 }
 
+
+is_git_root() {
+  if is_windows_system ; then
+    pwd_physical_native=$(pwd -W)
+  else
+    pwd_physical_native=$(pwd -P)
+  fi
+  if test "$pwd_physical_native" = "$(git rev-parse --show-toplevel)" ; then
+    return 0
+  else
+    return 1
+  fi
+}
+
+is_git_submodule() {
+    # Find the root of this git repo, then check if its parent dir is also a repo
+    1>/dev/null pushd $1 || return 1
+    if is_git_root ; then
+      1>/dev/null cd .. || popd || return 1
+      if is_git_root ; then
+        1>/dev/null popd || return 1
+        return 0
+      fi
+    fi
+    1>/dev/null popd || return 1
+}
+
+is_git_root() {
+  if is_windows_system ; then
+    pwd_physical_native=$(pwd -W)
+  else
+    pwd_physical_native=$(pwd -P)
+  fi
+  if test "$pwd_physical_native" = "$(git rev-parse --show-toplevel)" ; then
+    return 0
+  else
+    return 1
+  fi
+}
+
+git_submodule_rm() {
+  if ! test -d "$1" ; then
+    echo "Usage: git_submodule_rm <path>"
+    return 1
+  fi
+
+  if ! is_git_root ; then
+    echo "Not running from the root of the working tree."
+    return 1
+  fi
+  
+  if ! is_git_submodule "$1" ; then
+    echo "Not a direct submodule (no recursion)"
+    return 1
+  fi
+
+  echo "Removing submodule"
+  # using ${1%/} to remove trailing slashes
+  git config -f .gitmodules --remove-section submodule.${1%/}
+  git config -f .git/config --remove-section submodule.${1%/}
+  git rm --cached ${1%/}
+  return 0
+}
+
 git_daemon_subfolders() {
     # TODO test this command
 
