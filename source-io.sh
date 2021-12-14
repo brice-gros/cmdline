@@ -2,9 +2,10 @@
 # expected to be sourced 
 
 colorlog () {
-    sed --unbuffered \
-        -e 's/\(.*SUCCE.*\)/\o033[32m\1\o033[39m/i' \
-        -e 's/\(.*FAIL.*\)/\o033[31m\1\o033[39m/i' \
-        -e 's/\(.*WARN.*\)/\o033[33m\1\o033[39m/i' \
-        -e 's/\(.*ERROR.*\)/\o033[31m\1\o033[39m/i'
+    # sed --unbuffered
+    sed -u \
+        -e 's/\(.*SUCCE.*\)/\x1b[32m\1\x1b[39m/i' \
+        -e 's/\(.*FAIL.*\)/\x1b[31m\1\x1b[39m/i' \
+        -e 's/\(.*WARN.*\)/\x1b[33m\1\x1b[39m/i' \
+        -e 's/\(.*ERROR.*\)/\x1b[31m\1\x1b[39m/i'
 }
