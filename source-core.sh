@@ -82,6 +82,9 @@ settitle() {
 }
 
 setcoloredprompt() {
+  # record last command's return code
+  rc=$?
+
   if ! declare -f __git_ps1 > /dev/null ; then
     # real implementation is: https://raw.githubusercontent.com/git/git/master/contrib/completion/git-prompt.sh
     __git_ps1() {
@@ -96,13 +99,13 @@ setcoloredprompt() {
   
   # git bash default works well with black background:
   # export PS1="\[\033]0;$TITLEPREFIX:$PWD\007\]\n\[\033[32m\]\u@\h \[\033[35m\]$MSYSTEM \[\033[33m\]\w\[\033[36m\]`__git_ps1`\[\033[0m\]\n$ "
-  # mine works well with black/grey/white background: (Note that \e == \033 == \x1b)
+  # this one works well with black/grey/white background: (Note that \e == \033 == \x1b)
   systemname=$(uname)
   if is_msys ; then
     systemname=$MSYSTEM
   fi
 
-  export PS1="\n\[\e[43m\]`date_time_utc_iso8601 |cut -d '+' -f 1`\[\e[0m\]\n\[\e[32m\]\u@\h \[\e[35m\]$systemname \[\e[31m\]\w\[\e[36m\]`__git_ps1`\[\e[0m\]\n$ "
+  export PS1="\n#exitcode:\[\e[31;1m\]$rc\[\e[0m\]\n\[\e[43m\]`date_time_utc_iso8601 |cut -d '+' -f 1`\[\e[0m\]\n\[\e[32m\]\u@\h \[\e[35m\]$systemname \[\e[31m\]\w\[\e[36m\]`__git_ps1`\[\e[0m\]\n$ "
 }
 
 settitlepath() {
@@ -153,9 +156,9 @@ echo-eval() {
 }
 
 
-is_actual_path() {
-  # usage: is_actual_path /path/to/test
-  if test $(test -z "$1") -a $(test -d "$1") ; then
+is_actual_dir() {
+  # usage: is_actual_dir /path/to/dir/to/test
+  if test -d "$1" ; then
     echo $(cd $1 && test `pwd` = `pwd -P`)
     return 0
   else
