@@ -165,6 +165,21 @@ git_describe() {
   git describe --tags --always --dirty="-dirty"
 }
 
+git_rewrite_branch_users() {
+  if test -z "$1" || test -z "$2"  ; then
+    echo "Usage: git_rewrite_branch_users <User name> <User email>"
+    return 1
+  fi
+  read -n 1 -p "YOU ARE GOING TO REWRITE THE HISTORY OF THE BRANCH WITH AUTHOR AND COMMITER: '$1 <$2>'. Continue? Y/N :  " answeredinput
+  if test "$answeredinput" = "Y" ; then
+    git filter-branch -f --env-filter "
+      GIT_AUTHOR_NAME='$1'
+      GIT_AUTHOR_EMAIL='$2'
+      GIT_COMMITTER_NAME='$1'
+      GIT_COMMITTER_EMAIL='$2'
+    " HEAD
+  fi
+}
 
 is_git_root() {
   if is_windows_system ; then
