@@ -9,6 +9,7 @@ source ~/cmdline/source-core.sh
 source ~/cmdline/source-io.sh
 source ~/cmdline/source-git.sh
 enable_native_symlinks
+setup_history
 export PROMPT_COMMAND='setprompt'
 
 export HISTCONTROL=ignoreboth # ignoredups,ignoreboth,erasedups,ignorespace

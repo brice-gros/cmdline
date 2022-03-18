@@ -54,6 +54,15 @@ is_windows_system() {
   return 1
 }
 
+# https://unix.stackexchange.com/questions/18212/bash-history-ignoredups-and-erasedups-setting-conflict-with-common-history#18443
+setup_history() {
+  export HISTCONTROL=ignoreboth # ignoredups,ignoreboth,erasedups,ignorespace
+  HISTSIZE=10000                     # custom history size
+  HISTFILESIZE=1000000               # custom history file size
+  # beware `shopt` is bash specific:
+  shopt -s histappend
+}
+
 # https://stackoverflow.com/a/29835459
 current_script_dir() {
   if [ $# -ne 1 ]; then
