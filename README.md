@@ -8,10 +8,12 @@ For instance in a .bashrc (msys/git-bash, linux or mac):
 source ~/cmdline/source-core.sh
 source ~/cmdline/source-io.sh
 source ~/cmdline/source-git.sh
-enable_native_symlinks
-setup_history
+source ~/cmdline/source-dev.sh
+
+echo-eval enable_native_symlinks
+echo-eval setup_history
 export PROMPT_COMMAND='setprompt'
 
-export HISTCONTROL=ignoreboth # ignoredups,ignoreboth,erasedups,ignorespace
-shopt -s histappend
+echo-eval use_perl
+echo-eval use_nvm
 ```
