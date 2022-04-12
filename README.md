@@ -16,4 +16,6 @@ export PROMPT_COMMAND='setprompt'
 
 echo-eval use_perl
 echo-eval use_nvm
+echo-eval use_default_python 310
+echo-eval use_pipenv_in_project
 ```

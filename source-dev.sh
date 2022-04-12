@@ -28,7 +28,7 @@ python_unbuffered() {
   $(which python) -u $@ #unbuffered output
 }
 
-use_win_python() {
+use_default_python() {
     if is_msys ; then
       if [[ $1 == 2* ]]; then
         export PATH=/c/Python27/Scripts:/c/Python27:$PATH
@@ -40,4 +40,8 @@ use_win_python() {
       fi
       #alias python3=py_unbuffered
     fi
+}
+
+use_pipenv_in_project() {
+  export PIPENV_VENV_IN_PROJECT=1
 }
