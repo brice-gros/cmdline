@@ -28,7 +28,7 @@ git_local_prune() {
   if [ $# != 0 ]; then
   delete_args=$@
   fi
-  echo-eval "git branch -vv --color=never | grep -F --color=never ': gone]' | grep --color=never -oE '^[\*[:space:]]*[^[:space:]]+' | grep --color=never -oE '[^\*]*' | xargs --no-run-if-empty git branch $delete_args"
+  echo-eval "git branch -vv --color=never | grep -F --color=never ': gone]' | grep --color=never -oE '^[\*[:space:]]*[^[:space:]]+' | grep --color=never -oE '[^\*]*' | xargs -r git branch $delete_args"
 }
 
 git_current_branch() {
