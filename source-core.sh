@@ -10,7 +10,7 @@ is_cygwin() {
 }
 
 is_msys() {
-  if echo $(uname) | grep -iq MINGW; then
+  if echo $(uname) | grep -iqE 'MINGW|MSYS'; then
     return 0
   fi
   return 1
