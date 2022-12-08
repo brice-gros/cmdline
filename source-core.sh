@@ -164,6 +164,23 @@ echo-eval() {
   eval $@
 }
 
+get_real_path() (
+  if which realpath ; then
+    realpath $@
+  else
+    # https://stackoverflow.com/a/18443300
+    OURPWD=$PWD
+    cd "$(dirname "$1")"
+    LINK=$(readlink "$(basename "$1")")
+    while [ "$LINK" ]; do
+      cd "$(dirname "$LINK")"
+      LINK=$(readlink "$(basename "$1")")
+    done
+    REALPATH="$PWD/$(basename "$1")"
+    cd "$OURPWD"
+    echo "$REALPATH"
+  fi
+)
 
 is_actual_dir() {
   # usage: is_actual_dir /path/to/dir/to/test
