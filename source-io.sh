@@ -21,6 +21,10 @@ list_hardware_ip () {
   fi
 }
 
+remove_osx_browser_download_quarantine_flag () {
+  xattr -d com.apple.quarantine "$1"
+}
+
 start_audiostream_server () {
   # https://freedesktop.org/wiki/Software/PulseAudio/Documentation/User/Network/#directconnection
   if is_windows_system; then
