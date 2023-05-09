@@ -28,14 +28,32 @@ python_unbuffered() {
   $(which python) -u $@ #unbuffered output
 }
 
+_get_windows_python() {
+  if is_msys ; then
+    # list all python found from windows cmd
+    PYTHONS=$(cmd.exe //Q //C "where python")
+    # get git bash root in windows path
+    GIT_BASE=$(cd / ; pwd -W)
+    # iterate over PYTHONS and print only paths with the version number in it and which is not in GIT_BASE
+    PY=$( (for PYTHON in $PYTHONS; do 
+        echo $PYTHON | sed 's/\r//g' | sed 's/\\/\//g'
+    done) | grep -v $GIT_BASE | grep -E '[0-9\.\-]+' | head -n 1
+    )
+    echo $PY
+  fi
+}
+
 use_default_python() {
     if is_msys ; then
       if [[ $1 == 2* ]]; then
         export PATH=/c/Python27/Scripts:/c/Python27:$PATH
       elif [[ $1 == 3* ]]; then
-        export PATH=/c/Python$1/Scripts:/c/Python$1:$PATH
-        if [ ! -L /c/Python$1/python3.exe ]; then
-          ln -s /c/Python$1/python.exe /c/Python$1/python3.exe
+        PYTHON_BASE=$(dirname $(_get_windows_python))
+        PYTHON_BASE=$(cd $PYTHON_BASE ; pwd)
+        echo $PYTHON_BASE
+        export PATH=$PYTHON_BASE/Scripts:$PYTHON_BASE:$PATH
+        if [ ! -L $PYTHON_BASE/python3.exe ]; then
+          ln -s $PYTHON_BASE/python.exe $PYTHON_BASE/python3.exe
         fi
       fi
       #alias python3=py_unbuffered

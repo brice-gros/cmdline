@@ -234,3 +234,22 @@ enable_native_symlinks() {
     export MSYS="winsymlinks:nativestrict $MSYS"
   fi
 }
+
+killall() {
+  if is_windows_system ; then
+    for i in $(ps -W | grep "$@" | grep -Eo '^([[:space:]]+[0-9]+){4}' | grep -Eo '[0-9]+$'); do
+      taskkill -F -PID $i
+    done
+  else
+    killall -I "$@"
+  fi
+}
+
+local_setup() {
+  cmdline_basepath=$1
+  # Add extern subfolder to path
+  export PATH=$PATH:$cmdline_basepath/extern
+  if is_windows_system ; then
+    export PATH=/c/Windows/System32/OpenSSH:$PATH
+  fi
+}
