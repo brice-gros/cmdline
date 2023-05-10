@@ -37,7 +37,7 @@ _get_windows_python() {
     # iterate over PYTHONS and print only paths with the version number in it and which is not in GIT_BASE
     PY=$( (for PYTHON in $PYTHONS; do 
         echo $PYTHON | sed 's/\r//g' | sed 's/\\/\//g'
-    done) | grep -v $GIT_BASE | grep -E '[0-9\.\-]+' | head -n 1
+    done) | grep -v $GIT_BASE | grep -E '[0-9]+' | head -n 1
     )
     echo $PY
   fi
@@ -48,12 +48,16 @@ use_default_python() {
       if [[ $1 == 2* ]]; then
         export PATH=/c/Python27/Scripts:/c/Python27:$PATH
       elif [[ $1 == 3* ]]; then
-        PYTHON_BASE=$(dirname $(_get_windows_python))
-        PYTHON_BASE=$(cd $PYTHON_BASE ; pwd)
-        echo $PYTHON_BASE
-        export PATH=$PYTHON_BASE/Scripts:$PYTHON_BASE:$PATH
-        if [ ! -L $PYTHON_BASE/python3.exe ]; then
-          ln -s $PYTHON_BASE/python.exe $PYTHON_BASE/python3.exe
+        PYTHON_BASE=$(_get_windows_python)
+        if test -z "$PYTHON_BASE" ; then
+          echo "==> No Suitable Windows Python found"
+        else
+          PYTHON_BASE=$(dirname "$PYTHON_BASE")
+          PYTHON_BASE=$(cd $PYTHON_BASE ; pwd)
+          export PATH=$PYTHON_BASE/Scripts:$PYTHON_BASE:$PATH
+          if [ ! -L $PYTHON_BASE/python3.exe ]; then
+            ln -s $PYTHON_BASE/python.exe $PYTHON_BASE/python3.exe
+          fi
         fi
       fi
       #alias python3=py_unbuffered
