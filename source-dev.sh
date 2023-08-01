@@ -68,7 +68,7 @@ use_pipenv_in_project() {
   export PIPENV_VENV_IN_PROJECT=1
 }
 
-shrink_wsl2_vdisk() {
+wsl2_shrink_vdisk() {
   # inspired from https://stephenreescarter.net/how-to-shrink-a-wsl2-virtual-disk/
   vmname=$1
   diskpath=$(find "$USERPROFILE/AppData/Local/Packages" -type f -ipath *$vmname*/LocalState/*.vhdx | sed "s/\\\\/\\\\\\\\/g" | sed "s/\\//\\\\\\\\/g")
@@ -78,7 +78,7 @@ shrink_wsl2_vdisk() {
   compact vdisk
   exit
   " > /tmp/wsl2_shrink
-  wsl –terminate $vmname
-  wsl –shutdown
+  wsl --terminate $vmname
+  wsl --shutdown
   diskpart -s /tmp/wsl2_shrink
 }
