@@ -10,14 +10,14 @@ source ~/cmdline/source-io.sh
 source ~/cmdline/source-git.sh
 source ~/cmdline/source-dev.sh
 
-echo-eval enable_native_symlinks
-echo-eval setup_history
+echo_eval enable_native_symlinks
+echo_eval setup_history
 export PROMPT_COMMAND='setprompt'
 
-echo-eval local_setup
-echo-eval use_perl
-echo-eval use_nvm
-echo-eval use_default_python 310
-echo-eval use_pipenv_in_project
-echo-eval list_hardware_ip
+echo_eval local_setup
+echo_eval use_perl
+echo_eval use_nvm
+echo_eval use_default_python 310
+echo_eval use_pipenv_in_project
+echo_eval list_hardware_ip
 ```

@@ -20,6 +20,18 @@ git_clone_for_worktree() {
     popd
 }
 
+# Allows to run a command on all worktree subfolders
+# executing `git worktrees status` will execute git status on all worktree subfolders
+# note that passing quoted arguments requires double quoting such as `git worktrees config --add alias.test "'plip plop'"`
+# See https://en.wikipedia.org/wiki/ANSI_escape_code#3-bit_and_4-bit for color code usage
+git_worktrees() {
+  if [ $# != 0 ]; then
+    find . -type f -name .git -exec bash -c "echo -e '\n\\033[1;33m========\n==' \$(basename \$(dirname {})) && git -C \$(dirname {}) $1 $2 $3 $4 $5 $6 $7 $8 $9" \;
+  else
+    echo "Usage: git worktrees <command>"
+  fi
+}
+
 # Prune not-ahead local branches whose remote branch was removed
 # i.e. to be used after `git remote prune origin` or `git fetch -p`
 # use -D instead of -d to force remove if branch contains changes
@@ -28,23 +40,23 @@ git_local_prune() {
   if [ $# != 0 ]; then
   delete_args=$@
   fi
-  echo-eval "git branch -vv --color=never | grep -F --color=never ': gone]' | grep --color=never -oE '^[\*[:space:]]*[^[:space:]]+' | grep --color=never -oE '[^\*]*' | xargs -r git branch $delete_args"
+  echo_eval "git branch -vv --color=never | grep -F --color=never ': gone]' | grep --color=never -oE '^[\*[:space:]]*[^[:space:]]+' | grep --color=never -oE '[^\*]*' | xargs -r git branch $delete_args"
 }
 
 git_current_branch() {
-  echo-eval "git rev-parse --abbrev-ref HEAD"
+  echo_eval "git rev-parse --abbrev-ref HEAD"
 }
 
-git_branch() {
-  echo-eval "git branch -vv --no-color | grep [[:space:]]$(git rev-parse --abbrev-ref HEAD)[[:space:]]"
+git_branch_info() {
+  echo_eval "git branch -vv --no-color | grep [[:space:]]$(git rev-parse --abbrev-ref HEAD)[[:space:]]"
 }
 
 git_hash() {
-  echo-eval "git log -1 --format=%H $@"
+  echo_eval "git log -1 --format=%H $@"
 }
 
 git_fetch_prune_all() {
-  echo-eval "git fetch -p"  
+  echo_eval "git fetch -p"  
   
   local delete_args="-d"
   if [ $# != 0 ]; then
@@ -60,7 +72,7 @@ remove_quotes() {
 git_diff_ui() {
   for f in "$@" 
   do
-    n=$(remove-quotes $f)
+    n=$(remove_quotes $f)
     git difftool -y "$n" &
   done
 }
@@ -68,7 +80,7 @@ git_diff_ui() {
 git_diff_ui_head() {
   for f in "$@"
   do 
-    n=$(remove-quotes $f)
+    n=$(remove_quotes $f)
     git difftool -y "$n" &
   done
 }
@@ -103,41 +115,41 @@ git_rename_branch_remote_n_local() {
     return
   fi
   echo
-  echo-eval "git branch -m $1 $2"
-  echo-eval "git push origin $2"
-  echo-eval "git push origin :$1"
+  echo_eval "git branch -m $1 $2"
+  echo_eval "git push origin $2"
+  echo_eval "git push origin :$1"
 }
 
 git_unapply_index() {
-    echo-eval git diff --no-color --staged | $(which git) apply --reverse # using which git since git alias doesn't play well with pipes
+    echo_eval git diff --no-color --staged | $(which git) apply --reverse # using which git since git alias doesn't play well with pipes
 }
 
 git_revert_workdir_all() {
-    echo-eval git stash save --include-untracked --keep-index
-    echo-eval git stash drop
+    echo_eval git stash save --include-untracked --keep-index
+    echo_eval git stash drop
     git-unapply-index
 }
 
 git_revert_workdir_keep_untrack() {
-    echo-eval git checkout .
+    echo_eval git checkout .
   git-unapply-index
 }
 
 git_show_files_only() {
-  echo-eval git show --name-only --pretty="format:" $@
+  echo_eval git show --name-only --pretty="format:" $@
 }
 
 git_fetch_submodule_included() {
-  echo-eval "git fetch --recurse-submodules $@"
+  echo_eval "git fetch --recurse-submodules $@"
 }
 
 
 git_pull_submodule_included() {
-  echo-eval "git pull $@ && git submodule update --recursive"
+  echo_eval "git pull $@ && git submodule update --recursive"
 }
 
 git_checkout_submodule_included() {
-  echo-eval "git checkout $@ && git submodule update --recursive"
+  echo_eval "git checkout $@ && git submodule update --recursive"
 }
 
 git_log_plain() {
@@ -145,19 +157,19 @@ git_log_plain() {
 }
 
 git_graph() {
-  echo-eval git log --graph --decorate $@
+  echo_eval git log --graph --decorate $@
 }
 
 git_chmod_staged() {
   # set permissions to staged files (http://stackoverflow.com/a/21694391)
   # usage:  git-chmod-staged u+x file.sh file2.py
-  echo-eval git update-index --chmod=$@
+  echo_eval git update-index --chmod=$@
 }
 
 git_ls_staged() {
   # see permissions of staged files (http://stackoverflow.com/a/21694391)
   # usage:  git-ls-staged file.sh file2.py
-  echo-eval git ls-files --stage $@
+  echo_eval git ls-files --stage $@
 }
 
 git_describe() {
@@ -272,3 +284,24 @@ git_daemon_subfolders() {
 
 alias git-plog="git log --pretty=format:'%C(yellow)%h %C(white)%b %C(green)<%an>%n        %C(cyan)^^^^ %s' -20"
 alias git-prlog="git-plog --first-parent"
+
+# Utility to create git aliases for all git functions in this file
+_update_git_alias() {
+  if [ $# == 0 ]; then
+    if test -e ~/cmdline/.gitconfig ; then
+      aliasto=~/cmdline/.gitconfig
+    fi
+  else
+    aliasto=$1
+  fi
+
+  # if aliasto is not set leave the function
+  if test -z "$aliasto" ; then
+    echo "Usage: _update_git_alias [path_to_gitconfig=~/cmdline/.gitconfig]"
+  else
+    for fname in $(declare -F | grep -oE ' git_[a-z0-9_]+$') ; do
+      gitname=$(echo $fname | cut -d "_" -f 2- | cut -d "_" -f 1- | sed s/_/-/g)
+      git config --file $aliasto alias.$gitname '!f() { bash -c "source ~/cmdline/source-core.sh ; source ~/cmdline/source-git.sh ; '$fname' $@ " ; }; f'
+    done
+  fi
+}

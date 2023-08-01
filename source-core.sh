@@ -149,15 +149,15 @@ say() {
 }
 
 ECHOEVAL=1
-echo-eval-on() {
+echo_eval_on() {
   ECHOEVAL=1
 }
 
-echo-eval-off() {
+echo_eval_off() {
   ECHOEVAL=0
 }
 
-echo-eval() {
+echo_eval() {
   if [ $ECHOEVAL -eq 1 ] ; then
     echo ">>  " $@
   fi  
