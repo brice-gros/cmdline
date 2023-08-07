@@ -143,13 +143,12 @@ git_fetch_submodule_included() {
   echo_eval "git fetch --recurse-submodules $@"
 }
 
-
 git_pull_submodule_included() {
-  echo_eval "git pull $@ && git submodule update --recursive"
+  echo_eval "git pull --recurse-submodules $@"
 }
 
 git_checkout_submodule_included() {
-  echo_eval "git checkout $@ && git submodule update --recursive"
+  echo_eval "git checkout --recurse-submodules $@"
 }
 
 git_log_plain() {
