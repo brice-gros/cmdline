@@ -304,3 +304,9 @@ _update_git_alias() {
     done
   fi
 }
+
+setup_git_alias() {
+  if ! git config --global include.path | grep -c ~/cmdline/.gitconfig >/dev/null ; then
+    echo_eval git config --global include.path ~/cmdline/.gitconfig
+  fi  
+}
