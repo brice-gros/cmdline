@@ -248,8 +248,9 @@ killall() {
 local_setup() {
   cmdline_basepath=$1
   # Add extern subfolder to path
-  export PATH=$PATH:$cmdline_basepath/extern
   if is_windows_system ; then
     export PATH=/c/Windows/System32/OpenSSH:$PATH
+  else
+    export PATH=$PATH:$cmdline_basepath/extern
   fi
 }

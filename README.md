@@ -16,6 +16,7 @@ export PROMPT_COMMAND='setprompt'
 
 echo_eval local_setup
 echo_eval setup_git_alias
+echo_eval use_wsl2_ubuntu
 echo_eval use_perl
 echo_eval use_nvm
 echo_eval use_default_python 310

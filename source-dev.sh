@@ -68,6 +68,16 @@ use_pipenv_in_project() {
   export PIPENV_VENV_IN_PROJECT=1
 }
 
+use_wsl2_ubuntu() {
+  if is_windows_system ; then
+    if ! test -f ~/.wslgconfig ; then
+      echo '[system-distro-env]' > ~/.wslgconfig
+      echo 'WESTON_RDP_FRACTIONAL_HI_DPI_SCALING=true' >> ~/.wslgconfig
+      echo '#WESTON_RDP_DEBUG_DESKTOP_SCALING_FACTOR=500' >> ~/.wslgconfig
+    fi
+  fi
+}
+
 wsl2_shrink_vdisk() {
   # inspired from https://stephenreescarter.net/how-to-shrink-a-wsl2-virtual-disk/
   vmname=$1
