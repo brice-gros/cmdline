@@ -58,3 +58,24 @@ restart_audiostream_server () {
     start_audiostream_server
   fi
 }
+
+# Utility to install packages for capture2ocr function
+_capture2ocr_install () {
+  if is_windows_system; then
+    winget install capture2text
+  elif is_linux; then
+    # https://askubuntu.com/questions/1038099/capture2text-alternative-capture-text-from-screen-directly-in-ubuntu-mate
+    sudo apt-get install tesseract-ocr imagemagick xsel
+  fi
+}
+
+capture2ocr() {
+  if is_windows_system; then
+    # todo find cmdline args
+    >/dev/null capture2text & 
+  elif is_linux; then
+    # https://antofthy.gitlab.io/software/capture_ocr.sh.txt
+    convert x: -normalize png:- | tesseract --dpi 300 stdin stdout | xsel -ib && xsel -ob | code - &
+    # can be added as a shortcut calling `/bin/bash -i -c capture2ocr`
+  fi
+}
