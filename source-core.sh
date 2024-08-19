@@ -137,15 +137,24 @@ bell() {
   tput bel
 }
 
+flash() {
+  tput flash
+}
+
 say() {
   # https://stackoverflow.com/a/39647762
   if is_darwin ; then
-    say $@
+    say "$@"
   elif is_linux ; then
-    spd-say $@
+    spd-say "$@"
   else
     PowerShell -Command "Add-Type –AssemblyName System.Speech; (New-Object System.Speech.Synthesis.SpeechSynthesizer).Speak('$@');"
   fi
+}
+
+warn() {
+ msg="Attention please, $@"
+ flash ; bell ;  say "$msg" ; alert "$msg" ; echo "$msg"
 }
 
 ECHOEVAL=1
@@ -247,10 +256,14 @@ killall() {
 
 local_setup() {
   cmdline_basepath=$1
+  if test -z $1 ; then
+    cmdline_basepath=~/cmdline
+  fi
+  echo $cmdline_basepath
+  exit
   # Add extern subfolder to path
   if is_windows_system ; then
     export PATH=/c/Windows/System32/OpenSSH:$PATH
-  else
-    export PATH=$PATH:$cmdline_basepath/extern
   fi
+  export PATH=$PATH:$cmdline_basepath/extern
 }
