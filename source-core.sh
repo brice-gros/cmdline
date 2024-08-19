@@ -260,7 +260,6 @@ local_setup() {
     cmdline_basepath=~/cmdline
   fi
   echo $cmdline_basepath
-  exit
   # Add extern subfolder to path
   if is_windows_system ; then
     export PATH=/c/Windows/System32/OpenSSH:$PATH
