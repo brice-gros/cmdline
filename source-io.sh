@@ -79,3 +79,39 @@ capture2ocr() {
     # can be added as a shortcut calling `/bin/bash -i -c capture2ocr`
   fi
 }
+
+authorize_x_access_through_ssh() {
+  # in case of error: 'Authorization required, but no authorization protocol specified'
+  if is_linux; then
+    # https://www.reddit.com/r/linux4noobs/comments/lu1plx/comment/hwkdvlf/?utm_source=share&utm_medium=web3x&utm_name=web3xcss&utm_term=1&utm_content=share_button
+    # can be if X11 or Xwayland used
+    # pgrep Xorg
+    # pgrep Xwayland
+    # if -a not supported, should use cat /proc/$(pgrep X)/cmdline
+    cp $(pgrep X -a | grep -oE '\-auth [a-zA-Z0-9/.-]+' | cut -d' ' -f2) ~/.Xauthority
+    DISPLAY=:0 xhost +si:localuser:root
+  else
+    echo 'Not implemented: read_screen_edid()'
+  fi
+}
+
+read_screen_edid() {
+  if is_linux; then
+    # example of locations:
+    #  - /sys/devices/platform/gpu/drm/card1/card1-HDMI-A-1/edid
+    #  - /sys/devices/platform/axi/axi:gpu/drm/card1/card1-HDMI-A-1/edid
+    #  - /sys/devices/pci0000:64/0000:64:00.0/0000:65:00.0/drm/card1/card1-HDMI-A-1/edid
+    # using edid-decode here, but parse-edid works as well
+    find /sys/devices/ -iname edid -exec bash -c 'echo ====== {} && cat {} | edid-decode && echo ===== && echo' \;
+  else
+    echo 'Not implemented: read_screen_edid()'
+  fi
+}
+
+find_file_handle() {
+  if is_linux; then
+    sudo find /proc -type l,f -path "/proc/*/fd/*" -exec bash -c "file {} | grep -F '$1'" \;
+  else
+    echo 'Not implemented: find_file_handle()'
+  fi
+}
