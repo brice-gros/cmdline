@@ -19,6 +19,7 @@ echo_eval setup_git_alias
 echo_eval use_wsl2_ubuntu
 echo_eval use_perl
 echo_eval use_nvm
+nvm use --lts # for activating nvm by default, e.g. vscode editorconfig plugin to work, npm is required. To install it first use `nvm install --lts`
 echo_eval use_default_python 310
 echo_eval use_pipenv_in_project
 echo_eval list_hardware_ip
