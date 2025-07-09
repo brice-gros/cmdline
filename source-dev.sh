@@ -99,3 +99,7 @@ wsl2_shrink_vdisk() {
   wsl --shutdown
   diskpart -s /tmp/wsl2_shrink
 }
+
+pipe-android-emulator() {
+  adb kill-server; cd /tmp/ ; mkfifo backpipe ; nc -kl 5555 0<backpipe | nc 127.0.0.1 5555 > backpipe
+}
