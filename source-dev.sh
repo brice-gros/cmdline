@@ -103,3 +103,13 @@ wsl2_shrink_vdisk() {
 pipe-android-emulator() {
   adb kill-server; cd /tmp/ ; mkfifo backpipe ; nc -kl 5555 0<backpipe | nc 127.0.0.1 5555 > backpipe
 }
+
+use_docker() {
+  if is_linux ; then
+    if grep /etc/group -e "^docker:.*:$USER\$" > /dev/null 2>&1 ; then
+      return
+    fi
+    sudo usermod -aG docker $USER
+    newgrp docker
+  fi
+}
