@@ -18,7 +18,7 @@ use_nvm() {
         pushd ~
         git clone https://github.com/nvm-sh/nvm.git .nvm
         cd ~/.nvm
-        git checkout v0.40.1
+        git checkout v0.40.4
         popd
       fi
       test -s "$NVM_DIR/nvm.sh" && source "$NVM_DIR/nvm.sh" --no-use # This loads nvm but does not select a version

@@ -115,3 +115,9 @@ find_file_handle() {
     echo 'Not implemented: find_file_handle()'
   fi
 }
+
+urldecode() {
+  # https://stackoverflow.com/questions/6250698/how-to-decode-url-encoded-string-in-shell
+  # bash only
+  : "${*//+/ }"; echo -e "${_//%/\\x}";
+}
