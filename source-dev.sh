@@ -113,3 +113,29 @@ use_docker() {
     newgrp docker
   fi
 }
+
+patch_linux_unity_editor() {
+  if is_linux ; then
+    # for each folder under ~/Unity/Hub/Editor/
+    # replace Unity file with a patched one to fix scaling issues on high DPI monitors
+    # rename the original Unity file to Unity_ and copy the patched one to Unity
+
+    for editor_dir in ~/Unity/Hub/Editor/*/Editor ; do
+      if test -d "$editor_dir" ; then
+        if test -f "$editor_dir/Unity" ; then
+          if test -f "$editor_dir/Unity_" ; then
+            #echo "==> Unity already patched in $editor_dir"
+            continue
+          fi
+          echo "==> Patching Unity in $editor_dir"
+          mv "$editor_dir/Unity" "$editor_dir/Unity_"
+
+          echo '#! /usr/bin/env bash' > "$editor_dir/Unity"
+          echo 'SCRIPT_DIR="$( cd -- "$( dirname -- "${BASH_SOURCE[0]:-$0}"; )" &> /dev/null && pwd 2> /dev/null; )";' >> "$editor_dir/Unity"
+          echo 'GDK_SCALE=2 GDK_DPI_SCALE=0.5 "$SCRIPT_DIR/Unity_" "$@"' >> "$editor_dir/Unity"
+          chmod +x "$editor_dir/Unity"
+        fi
+      fi
+    done
+  fi
+}

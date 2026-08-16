@@ -23,5 +23,6 @@ echo_eval use_docker
 nvm use --lts # for activating nvm by default, e.g. vscode editorconfig plugin to work, npm is required. To install it first use `nvm install --lts`
 echo_eval use_default_python 310
 echo_eval use_pipenv_in_project
+echo_eval patch_linux_unity_editor
 echo_eval list_hardware_ip
 ```
