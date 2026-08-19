@@ -12,12 +12,18 @@
 # Clone a repository without checkout and create an empty branch checkout as detached HEAD (https://stackoverflow.com/a/54408181)
 # so `git worktree add` can be used to safely checkout branches as subfolders
 git_clone_for_worktree() {
-    url=$1
-    target=$(basename $1 .git)
-    git clone --no-checkout $url $target
-    pushd $target
-    git checkout $(git commit-tree $(git hash-object -t tree /dev/null) < /dev/null)
-    popd
+    url="$1"
+    dest="$2"
+    target=$(basename "$url" .git)
+    if test -z "$dest" ; then
+      destgit=$target/.git
+    else
+      destgit=$dest/$target/.git
+    fi
+    echo_eval git clone --bare "$url" "$destgit"
+    pushd $destgit || exit
+    echo_eval git symbolic-ref HEAD refs/heads/-base-
+    popd || exit
 }
 
 # Allows to run a command on all worktree subfolders
